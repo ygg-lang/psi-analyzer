@@ -1,4 +1,5 @@
 use std::borrow::BorrowMut;
+use std::cmp::Ordering;
 use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
 use std::ops::DerefMut;
@@ -7,14 +8,14 @@ use std::sync::{LazyLock, Mutex};
 pub mod manager;
 pub mod id;
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-pub struct LanguageID(usize);
+#[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct LanguageID(u64);
 
 #[derive(Clone, Debug)]
 pub struct LanguageType {
     id: LanguageID,
     name: String,
-    base: LanguageID,
+    parent: LanguageID,
     mime_type: &'static str,
 }
 
@@ -23,6 +24,18 @@ impl Eq for LanguageType {}
 impl PartialEq for LanguageType {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
+    }
+}
+
+impl PartialOrd for LanguageType {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.id.partial_cmp(&other.id)
+    }
+}
+
+impl Ord for LanguageType {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.id.cmp(&other.id)
     }
 }
 
@@ -36,7 +49,8 @@ impl LanguageType {
     pub fn any() -> Self {
         Self {
             id: LanguageID::any(),
-            base: LanguageID::any(),
+            name: "*".to_string(),
+            parent: LanguageID::any(),
             mime_type: "",
         }
     }
@@ -44,6 +58,6 @@ impl LanguageType {
         if self.id.is_any() {
             return None;
         }
-        return Some(self.base.language_type().ok()?.id);
+        return Some(self.parent.language_type().ok()?.id);
     }
 }
