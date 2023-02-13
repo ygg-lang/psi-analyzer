@@ -1,3 +1,5 @@
+use std::sync::{MutexGuard, PoisonError, TryLockError};
+
 mod runtime;
 
 pub type PsiResult<T = ()> = Result<T, PsiError>;

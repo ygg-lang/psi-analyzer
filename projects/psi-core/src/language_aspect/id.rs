@@ -1,8 +1,5 @@
-use std::collections::hash_map::DefaultHasher;
-
-use crate::{errors::PsiResult, PsiError, LANGUAGE_REGISTRY_INSTANCE};
-
 use super::*;
+use crate::LanguageRegistry;
 
 impl LanguageID {
     pub fn any() -> Self {
@@ -18,8 +15,8 @@ impl LanguageID {
         Self(hasher.finish())
     }
 
-    pub fn language_type(&self) -> PsiResult<LanguageType> {
-        match LANGUAGE_REGISTRY_INSTANCE.try_lock()?.find_language(LanguageID(self.0)) {
+    pub fn language_type(&self) -> PsiResult<LanguageInstance> {
+        match LanguageRegistry::find_language(LanguageID(self.0)) {
             Some(s) => Ok(s.clone()),
             None => Err(PsiError::runtime_error(format!("Language {} not found", self.0))),
         }
