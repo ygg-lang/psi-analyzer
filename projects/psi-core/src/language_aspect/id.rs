@@ -2,12 +2,6 @@ use super::*;
 use crate::LanguageRegistry;
 
 impl LanguageID {
-    pub fn any() -> Self {
-        Self(0)
-    }
-    pub fn is_any(&self) -> bool {
-        self.0 == 0
-    }
     pub fn new(s: &str) -> LanguageID {
         let normalized = normalize(s);
         let mut hasher = DefaultHasher::new();

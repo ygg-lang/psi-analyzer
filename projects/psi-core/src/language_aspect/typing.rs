@@ -27,9 +27,6 @@ impl Hash for LanguageInstance {
 }
 
 impl LanguageInstance {
-    pub fn any() -> Self {
-        Self { id: LanguageID::any(), name: "*".to_string(), parent: LanguageID::any(), mime_type: "" }
-    }
     pub fn get_parent(&self) -> Option<LanguageID> {
         if self.id.is_any() {
             return None;

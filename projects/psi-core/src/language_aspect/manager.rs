@@ -1,12 +1,10 @@
-use crate::FileID;
 use dashmap::{mapref::multiple::RefMulti, DashMap};
-use std::io::empty;
 
 use super::*;
 
 pub static LANGUAGE_REGISTRY_INSTANCE: LazyLock<LanguageRegistry> = LazyLock::new(|| {
     let mut languages = DashMap::new();
-    languages.insert(FileID(0), LanguageInstance::any());
+    languages.insert(LanguageID::any().0, LanguageInstance::any());
     LanguageRegistry { languages }
 });
 
@@ -18,24 +16,21 @@ impl Debug for LanguageRegistry {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let mut languages = vec![];
         for instance in self.languages.iter() {
-            languages.push(instance.name.clone());
+            languages.push(instance.display_name.clone());
         }
         f.debug_struct("LanguageRegistry").field("languages", &languages).finish()
     }
 }
 
 impl LanguageRegistry {
-    pub fn register_language<S>(language: S, parent: LanguageID) -> PsiResult<LanguageID>
-    where
-        S: Into<String>,
-    {
-        let name = language.into();
-        let id = LanguageID::new(&name);
-        if LANGUAGE_REGISTRY_INSTANCE.languages.contains_key(&id.0) {
-            Err(PsiError::runtime_error(format!("Language {} already registered", name)))?;
+    pub fn register_language<T: LanguageType>(language: T) -> PsiResult<LanguageID> {
+        let lang = LanguageInstance::instantiate(language);
+        if LANGUAGE_REGISTRY_INSTANCE.languages.contains_key(&lang.id.0) {
+            Err(PsiError::runtime_error(format!("Language {} already registered", lang.display_name)))?;
         }
-        LANGUAGE_REGISTRY_INSTANCE.languages.insert(id.0, LanguageInstance { id, name, parent, mime_type: "" });
-        Ok(id)
+        let key = lang.id.0;
+        LANGUAGE_REGISTRY_INSTANCE.languages.insert(key, lang);
+        Ok(lang.id)
     }
     pub fn override_parent(language: LanguageID, parent: LanguageID) -> PsiResult<()> {
         match LANGUAGE_REGISTRY_INSTANCE.languages.get_mut(&language.0) {
