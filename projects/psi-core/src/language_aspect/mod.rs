@@ -1,25 +1,26 @@
-use std::{
-    fmt::Debug,
-    ops::Range,
-};
+use std::fmt::Debug;
+use std::borrow::BorrowMut;
+use std::cell::LazyCell;
+use std::ops::DerefMut;
+use std::sync::{LazyLock, Mutex, TryLockResult};
+use crate::LanguageID;
+
+pub mod manager;
+pub mod id;
 
 pub trait LanguageType {
-    fn language_id() -> &'static str;
-}
-
-pub struct RustLanguage {}
-
-impl LanguageType for RustLanguage {
-    fn language_id() -> LanguageID {
-        LanguageID("rust")
+    fn language_id() -> LanguageID;
+    fn mime_type() -> &'static str;
+    fn base_language() -> Option<Self>
+        where
+            Self: Sized,
+    {
+        None
     }
-}
-
-pub struct LanguageID(&'static str);
-
-impl From<String> for LanguageID {
-    fn from(s: String) -> Self {
-        Self(s.as_str())
+    fn dialects() -> Vec<Self>
+        where
+            Self: Sized,
+    {
+        Vec::new()
     }
-}
 }
