@@ -27,10 +27,17 @@ impl Hash for LanguageInstance {
 }
 
 impl LanguageInstance {
-    pub fn get_parent(&self) -> Option<LanguageID> {
-        if self.id.is_any() {
-            return None;
+    pub fn instantiate<T>(language: T) -> Self
+    where
+        T: LanguageType + 'static,
+    {
+        Self {
+            id: T::id(),
+            display_id: language.,
+            parent: T::parent(&language),
+            file_name: T::file_names(&language),
+            file_extension: T::file_extensions(&language),
+            mime: T::file_mime(&language),
         }
-        return Some(self.parent.language_type().ok()?.id);
     }
 }

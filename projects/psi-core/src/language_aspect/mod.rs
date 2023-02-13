@@ -9,54 +9,52 @@ use std::{
 
 use mime::Mime;
 
-use crate::{errors::PsiResult, PsiError, LANGUAGE_REGISTRY_INSTANCE};
+use crate::{errors::PsiResult, PsiError};
 
 pub mod id;
+pub mod instance;
 pub mod manager;
-pub mod typing;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct LanguageID(u64);
 
-pub trait LanguageType {
-    fn display_name(&self) -> &str {
-        self.name()
+pub trait LanguageType
+where
+    Self: 'static,
+{
+    // hash of the debug_name
+    fn id() -> LanguageID {
+        let mut hasher = DefaultHasher::new();
+        Self::debug_name().hash(&mut hasher);
+        LanguageID(hasher.finish())
     }
 
-    fn parent(&self) -> LanguageID {
-        LanguageID::any()
+    fn debug_name() -> &'static str;
+
+    fn display_id() -> Option<&'static str> {
+        None
     }
-    fn file_pattern(&self) -> Vec<String> {
+
+    fn parent(&self) -> Option<LanguageID> {
+        None
+    }
+    fn file_names(&self) -> Vec<String> {
         vec![]
     }
-    fn extensions(&self) -> Vec<String> {
+    fn file_extensions(&self) -> Vec<String> {
+        vec![]
+    }
+    fn file_mime(&self) -> Vec<Mime> {
         vec![]
     }
 }
 
 #[derive(Clone, Debug)]
 pub struct LanguageInstance {
-    id: LanguageID,
-    display_name: String,
-    parent: LanguageID,
-    file_name: Vec<String>,
-    file_extension: Vec<String>,
-    mime: Vec<Mime>,
-}
-
-impl LanguageInstance {
-    pub fn instantiate<T: LanguageType>(language: T) -> Self {
-        let id = LanguageID(type_id::<T>());
-        let display_name = language.display_name().to_string();
-        let parent = language.parent();
-        let file_name = language.file_pattern();
-        let file_extension = language.extensions();
-        let mime = vec![];
-        Self { id, display_name, parent, file_name, file_extension, mime }
-    }
-}
-
-pub trait PluginType {
-    fn file_extension() -> Vec<String> {}
-    fn file_name() -> Vec<String> {}
+    pub id: LanguageID,
+    pub display_id: Option<String>,
+    pub parent: Option<LanguageID>,
+    pub file_name: Vec<String>,
+    pub file_extension: Vec<String>,
+    pub mime: Vec<Mime>,
 }
