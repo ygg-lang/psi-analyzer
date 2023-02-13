@@ -4,27 +4,46 @@ use std::hash::{Hash, Hasher};
 use std::ops::DerefMut;
 use std::sync::{LazyLock, Mutex};
 
-use crate::LanguageID;
-
 pub mod manager;
 pub mod id;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub struct LanguageID(usize);
+
+#[derive(Clone, Debug)]
 pub struct LanguageType {
-    pub language_id: LanguageID,
-    pub mime_type: &'static str,
+    id: LanguageID,
+    name: String,
+    base: LanguageID,
+    mime_type: &'static str,
 }
 
 impl Eq for LanguageType {}
 
 impl PartialEq for LanguageType {
     fn eq(&self, other: &Self) -> bool {
-        self.language_id == other.language_id
+        self.id == other.id
     }
 }
 
 impl Hash for LanguageType {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        self.language_id.hash(state);
+        self.id.hash(state);
+    }
+}
+
+impl LanguageType {
+    pub fn any() -> Self {
+        Self {
+            id: LanguageID::any(),
+            base: LanguageID::any(),
+            mime_type: "",
+        }
+    }
+    pub fn get_parent(&self) -> Option<LanguageID> {
+        if self.id.is_any() {
+            return None;
+        }
+        return Some(self.base.language_type().ok()?.id);
     }
 }

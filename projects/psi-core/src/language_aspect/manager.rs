@@ -9,15 +9,23 @@ pub static LANGUAGE_REGISTRY_INSTANCE: LazyLock<Mutex<LanguageRegistry>> = LazyL
 });
 
 pub struct LanguageRegistry {
-    languages: BTreeMap<String, LanguageType>,
+    languages: BTreeMap<usize, LanguageType>,
 }
 
 impl LanguageRegistry {
-    pub fn find_language<S: AsRef<str>>(&self, language_id: S) -> Option<&LanguageType> {
-        self.languages.get(language_id.as_ref())
+    pub fn get_all_languages(&self) -> impl Iterator<Item=LanguageID> + '_ {
+        self.languages.iter().map(|(k, _)| LanguageID(*k))
     }
-
+    pub fn find_language(&self, language: LanguageID) -> Option<&LanguageType> {
+        self.languages.get(&language.0)
+    }
     pub fn register_language(&mut self, language: LanguageType) {
-        self.languages.insert(language.language_id.as_ref().to_string(), language);
+        self.languages.insert(language.id.0, language);
+    }
+    pub fn get_parent(&self, language: LanguageID) -> Option<LanguageID> {
+        if language.is_any() {
+            return None;
+        }
+        Some(self.find_language(language)?.base)
     }
 }

@@ -1,29 +1,24 @@
-use std::sync::TryLockResult;
-use crate::LANGUAGE_REGISTRY_INSTANCE;
+use crate::{LANGUAGE_REGISTRY_INSTANCE, PsiError};
+use crate::errors::PsiResult;
+
 use super::*;
 
-#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
-pub struct LanguageID(&'static str);
-
-impl AsRef<str> for LanguageID {
-    fn as_ref(&self) -> &str {
-        self.0
-    }
-}
 
 impl LanguageID {
     pub fn any() -> Self {
-        Self::new("")
+        Self(0)
     }
-    pub fn new(id: &'static str) -> Self {
-        Self(id)
+    pub fn is_any(&self) -> bool {
+        self.0 == 0
     }
-    pub fn get_type(&self) -> Option<LanguageType> {
-        match LANGUAGE_REGISTRY_INSTANCE.lock() {
-            Ok(o) => {
-                o.find_language(self.0).copied()
+    pub fn language_type(&self) -> PsiResult<LanguageType> {
+        match LANGUAGE_REGISTRY_INSTANCE.try_lock()?.find_language(self.0) {
+            Some(s) => {
+                Ok(s.clone())
             }
-            Err(_) => {None}
+            None => {
+                Err(PsiError::runtime_error(format!("Language {} not found", self.0)))
+            }
         }
     }
 }
