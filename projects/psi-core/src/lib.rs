@@ -3,9 +3,14 @@
 #![allow(clippy::needless_return)]
 #![doc = include_str ! ("../Readme.md")]
 
-pub use crate::{errors::{PsiError, PsiErrorKind}};
-pub use crate::language_aspect::{LanguageID, manager::LANGUAGE_REGISTRY_INSTANCE, manager::LanguageRegistry};
+pub use crate::{
+    errors::{PsiError, PsiErrorKind},
+    language_aspect::{
+        manager::{LanguageRegistry, LANGUAGE_REGISTRY_INSTANCE},
+        LanguageID,
+    },
+};
 
-pub mod language_aspect;
 pub mod errors;
-// pub mod file_aspect;
+pub mod file_aspect;
+pub mod language_aspect;

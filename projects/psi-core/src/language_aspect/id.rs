@@ -1,7 +1,6 @@
 use std::collections::hash_map::DefaultHasher;
 
-use crate::{LANGUAGE_REGISTRY_INSTANCE, PsiError};
-use crate::errors::PsiResult;
+use crate::{errors::PsiResult, PsiError, LANGUAGE_REGISTRY_INSTANCE};
 
 use super::*;
 
@@ -13,21 +12,20 @@ impl LanguageID {
         self.0 == 0
     }
     pub fn new(s: &str) -> LanguageID {
+        let normalized = normalize(s);
         let mut hasher = DefaultHasher::new();
-        s.hash(&mut hasher);
+        normalized.hash(&mut hasher);
         Self(hasher.finish())
     }
 
-
     pub fn language_type(&self) -> PsiResult<LanguageType> {
         match LANGUAGE_REGISTRY_INSTANCE.try_lock()?.find_language(LanguageID(self.0)) {
-            Some(s) => {
-                Ok(s.clone())
-            }
-            None => {
-                Err(PsiError::runtime_error(format!("Language {} not found", self.0)))
-            }
+            Some(s) => Ok(s.clone()),
+            None => Err(PsiError::runtime_error(format!("Language {} not found", self.0))),
         }
     }
 }
 
+fn normalize(s: &str) -> String {
+    s.to_ascii_lowercase()
+}

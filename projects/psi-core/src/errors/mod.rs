@@ -1,7 +1,6 @@
 mod runtime;
 
-pub type PsiResult<T=()> = Result<T, PsiError>;
-
+pub type PsiResult<T = ()> = Result<T, PsiError>;
 
 pub struct PsiError {
     kind: PsiErrorKind,
@@ -16,9 +15,10 @@ pub struct RuntimeError {
 }
 
 impl PsiError {
-    pub fn runtime_error(message: String) -> Self {
-        Self {
-            kind: PsiErrorKind::RuntimeError(box RuntimeError { message }),
-        }
+    pub fn runtime_error<T>(message: T) -> Self
+    where
+        T: Into<String>,
+    {
+        Self { kind: PsiErrorKind::RuntimeError(box RuntimeError { message: message.into() }) }
     }
 }

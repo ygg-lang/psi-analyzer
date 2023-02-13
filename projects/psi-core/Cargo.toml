@@ -1,6 +1,6 @@
 [package]
 name = "psi-core"
-version = "0.1.5"
+version = "0.0.0"
 authors = ["Aster <192607617@qq.com>"]
 description = "Yggdrasil Shared Structure"
 repository = "https://github.com/ygg-lang/yggdrasil-rs"
@@ -9,6 +9,7 @@ license = "MPL-2.0"
 edition = "2021"
 
 [dependencies]
+dashmap = "5.4.0"
 mime = "0.3.16"
 url = "2.3.1"
 
