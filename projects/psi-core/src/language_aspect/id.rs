@@ -1,6 +1,15 @@
+use std::sync::TryLockResult;
+use crate::LANGUAGE_REGISTRY_INSTANCE;
 use super::*;
 
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
 pub struct LanguageID(&'static str);
+
+impl AsRef<str> for LanguageID {
+    fn as_ref(&self) -> &str {
+        self.0
+    }
+}
 
 impl LanguageID {
     pub fn any() -> Self {
@@ -9,17 +18,15 @@ impl LanguageID {
     pub fn new(id: &'static str) -> Self {
         Self(id)
     }
+    pub fn get_type(&self) -> Option<LanguageType> {
+        match LANGUAGE_REGISTRY_INSTANCE.lock() {
+            Ok(o) => {
+                o.find_language(self.0).copied()
+            }
+            Err(_) => {None}
+        }
+    }
 }
 
 
 pub struct RustLanguage {}
-
-impl LanguageType for RustLanguage {
-    fn language_id() -> LanguageID {
-        LanguageID("rust")
-    }
-
-    fn mime_type() -> &'static str {
-        todo!()
-    }
-}
