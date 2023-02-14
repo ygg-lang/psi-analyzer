@@ -42,12 +42,12 @@ impl LanguageRegistry {
 }
 
 impl LanguageRegistry {
-    pub fn get_all_languages<'a>(&'a self) -> impl Iterator<Item = LanguageID> + 'a {
-        self.languages.iter().map(|l| l.id)
-    }
-    pub fn find_language(&self, language: LanguageID) -> Option<LanguageInstance> {
+    pub fn get_language(&self, language: LanguageID) -> Option<LanguageInstance> {
         let item = self.languages.get(&language.0)?;
         Some(item.value().clone())
+    }
+    pub fn get_all_languages<'a>(&'a self) -> impl Iterator<Item = LanguageInstance> + 'a {
+        self.languages.iter().map(|l| l.value().clone())
     }
     pub fn get_base(&self, language: LanguageID) -> Option<LanguageID> {
         self.languages.get(&language.0)?.parent

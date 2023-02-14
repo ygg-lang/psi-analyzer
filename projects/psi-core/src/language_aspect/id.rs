@@ -10,7 +10,7 @@ impl LanguageID {
     }
 
     pub fn language_type(&self, registry: &LanguageRegistry) -> PsiResult<LanguageInstance> {
-        match registry.find_language(LanguageID(self.0)) {
+        match registry.get_language(LanguageID(self.0)) {
             Some(s) => Ok(s.clone()),
             None => Err(PsiError::runtime_error(format!("Language {} not found", self.0))),
         }

@@ -14,6 +14,7 @@ use crate::{errors::PsiResult, PsiError};
 pub mod id;
 pub mod instance;
 pub mod manager;
+pub mod resolver;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct LanguageID(u64);
@@ -57,7 +58,7 @@ pub struct LanguageInstance {
     pub debug_name: &'static str,
     pub display_name: String,
     pub parent: Option<LanguageID>,
-    pub file_name: Vec<String>,
-    pub file_extension: Vec<String>,
-    pub file_mime: Vec<Mime>,
+    pub file_names: Vec<String>,
+    pub file_extensions: Vec<String>,
+    pub file_mimes: Vec<Mime>,
 }
