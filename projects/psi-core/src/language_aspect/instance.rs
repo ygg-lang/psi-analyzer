@@ -36,6 +36,7 @@ impl LanguageInstance {
             debug_name: T::debug_name(),
             display_name: language.display_id().to_string(),
             parent: language.parent(),
+            case_insensitive: language.case_insensitive(),
             file_names: language.file_names(),
             file_extensions: language.file_extensions(),
             file_mimes: language.file_mime(),

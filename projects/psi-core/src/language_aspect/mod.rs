@@ -29,17 +29,17 @@ where
         Self::debug_name().hash(&mut hasher);
         LanguageID(hasher.finish())
     }
-
     fn debug_name() -> &'static str {
         type_name::<Self>()
     }
-
     fn display_id(&self) -> &'static str {
         ""
     }
-
     fn parent(&self) -> Option<LanguageID> {
         None
+    }
+    fn case_insensitive(&self) -> bool {
+        false
     }
     fn file_names(&self) -> Vec<String> {
         vec![]
@@ -58,6 +58,7 @@ pub struct LanguageInstance {
     pub debug_name: &'static str,
     pub display_name: String,
     pub parent: Option<LanguageID>,
+    pub case_insensitive: bool,
     pub file_names: Vec<String>,
     pub file_extensions: Vec<String>,
     pub file_mimes: Vec<Mime>,
