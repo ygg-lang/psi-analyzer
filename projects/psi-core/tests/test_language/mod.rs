@@ -1,13 +1,13 @@
-use std::ops::Deref;
-
-use psi_core::{LanguageID, LanguageRegistry, LanguageType, LANGUAGE_REGISTRY_INSTANCE};
+use psi_core::{LanguageID, LanguageRegistry, LanguageType};
 
 #[test]
 fn rust_language() {
-    LanguageRegistry::register_language(RustLanguage).ok();
-    LanguageRegistry::register_language(JavascriptLanguage).ok();
-    LanguageRegistry::register_language(JavascriptXLanguage).ok();
-    println!("{:?}", LANGUAGE_REGISTRY_INSTANCE.deref());
+    let langs = LanguageRegistry::default();
+
+    langs.register_language(RustLanguage).ok();
+    langs.register_language(JavascriptLanguage).ok();
+    langs.register_language(JavascriptXLanguage).ok();
+    println!("{:?}", langs);
 }
 
 pub struct RustLanguage;
@@ -17,19 +17,19 @@ pub struct JavascriptLanguage;
 pub struct JavascriptXLanguage;
 
 impl LanguageType for RustLanguage {
-    fn display_id() -> &'static str {
+    fn display_id(&self) -> &'static str {
         "language.rust"
     }
 }
 
 impl LanguageType for JavascriptLanguage {
-    fn display_id() -> &'static str {
+    fn display_id(&self) -> &'static str {
         "language.javascript"
     }
 }
 
 impl LanguageType for JavascriptXLanguage {
-    fn display_id() -> &'static str {
+    fn display_id(&self) -> &'static str {
         "language.javascript.x"
     }
     fn parent(&self) -> Option<LanguageID> {

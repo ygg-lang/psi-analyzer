@@ -9,8 +9,8 @@ impl LanguageID {
         Self(hasher.finish())
     }
 
-    pub fn language_type(&self) -> PsiResult<LanguageInstance> {
-        match LanguageRegistry::find_language(LanguageID(self.0)) {
+    pub fn language_type(&self, registry: &LanguageRegistry) -> PsiResult<LanguageInstance> {
+        match registry.find_language(LanguageID(self.0)) {
             Some(s) => Ok(s.clone()),
             None => Err(PsiError::runtime_error(format!("Language {} not found", self.0))),
         }

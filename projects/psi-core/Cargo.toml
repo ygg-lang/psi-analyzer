@@ -13,6 +13,7 @@ dashmap = "5.4.0"
 mime = "0.3.16"
 mediatype = "0.19.13"
 url = "2.3.1"
+fluent = "0.16.0"
 
 [features]
 default = []

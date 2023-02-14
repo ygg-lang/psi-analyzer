@@ -1,10 +1,10 @@
+use dashmap::{mapref::multiple::RefMulti, DashMap};
 use std::{
+    any::type_name,
     cmp::Ordering,
     collections::hash_map::DefaultHasher,
     fmt::{Debug, Formatter},
     hash::{Hash, Hasher},
-    intrinsics::type_id,
-    sync::LazyLock,
 };
 
 use mime::Mime;
@@ -29,10 +29,12 @@ where
         LanguageID(hasher.finish())
     }
 
-    fn debug_name() -> &'static str;
+    fn debug_name() -> &'static str {
+        type_name::<Self>()
+    }
 
-    fn display_id() -> Option<&'static str> {
-        None
+    fn display_id(&self) -> &'static str {
+        ""
     }
 
     fn parent(&self) -> Option<LanguageID> {
@@ -52,9 +54,10 @@ where
 #[derive(Clone, Debug)]
 pub struct LanguageInstance {
     pub id: LanguageID,
-    pub display_id: Option<String>,
+    pub debug_name: &'static str,
+    pub display_name: String,
     pub parent: Option<LanguageID>,
     pub file_name: Vec<String>,
     pub file_extension: Vec<String>,
-    pub mime: Vec<Mime>,
+    pub file_mime: Vec<Mime>,
 }

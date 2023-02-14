@@ -10,10 +10,7 @@ pub use crate::{
     //     manager::{FileRegistry, File_REGISTRY_INSTANCE},
     //     FileID, FileInstance, FileType,
     // },
-    language_aspect::{
-        manager::{LanguageRegistry, LANGUAGE_REGISTRY_INSTANCE},
-        LanguageID, LanguageInstance, LanguageType,
-    },
+    language_aspect::{manager::LanguageRegistry, LanguageID, LanguageInstance, LanguageType},
 };
 
 pub mod errors;

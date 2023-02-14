@@ -33,11 +33,12 @@ impl LanguageInstance {
     {
         Self {
             id: T::id(),
-            display_id: language.,
-            parent: T::parent(&language),
-            file_name: T::file_names(&language),
-            file_extension: T::file_extensions(&language),
-            mime: T::file_mime(&language),
+            debug_name: T::debug_name(),
+            display_name: language.display_id().to_string(),
+            parent: language.parent(),
+            file_name: language.file_names(),
+            file_extension: language.file_extensions(),
+            file_mime: language.file_mime(),
         }
     }
 }
